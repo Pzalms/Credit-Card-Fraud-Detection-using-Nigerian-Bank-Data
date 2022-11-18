@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Account Transactions</title>
+
+	<link rel="stylesheet" href="css/styles.css">
+	<link rel="stylesheet" href="css/transactions.css">
+</head>
+
+<body>
+	<img src="images/accessbank-logo.jpg" alt="" class="logo" />
+	<main>
+		<h1>Account Transaction Details</h1>
+		<div>
+			<input type="text" id="accountNumber" placeholder="Account Number">
+			<input type="submit" value="View Transactions" id="viewButton" />
+		</div>
+		<div id="tableContainer">
+			<table id="transactionDetails">
+				<thead>
+					<tr>
+						<th>Account</th>
+						<th>Domain</th>
+						<th>Type</th>
+						<th>Amount (&#x20a6;)</th>
+						<th>Status</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</main>
+
+	<script src="js/data-access.js"></script>
+	<script>
+		const tableContainer = document.querySelector('#tableContainer');
+		const transactionsTableBody = document.querySelector('#transactionDetails tbody');
+		const viewButton = document.querySelector('#viewButton');
+
+		viewButton.onclick = function (e) {
+			let accNumber = document.querySelector('#accountNumber').value;
+
+			if (accNumber.length > 0) {
+				for (let customer of customerData) {
+					if (customer.accountNumber === accNumber) {
+						populateTable(customer);
+						return;
+					}
+				}
+				alert(`Account ${accNumber} does not exist`);
+			}
+			else {
+				alert('Please enter an account number');
+			}
+		};
+
+
+		function populateTable(customer) {
+			tableContainer.style.display = 'initial';
+			transactionsTableBody.innerHTML = '';
+
+			if (localStorage.transactions) {
+				let allTransactions = JSON.parse(localStorage.transactions);
+
+				let customerTransactions = allTransactions.filter((trans) => function () {
+					return trans.accountNumber === customer.accountNumber;
+				});
+
+				if (customerTransactions) {
+					for (let tr of customerTransactions) {
+						tr = new Transaction(
+							tr.accountNumber, tr.domain, tr.type, tr.amount);
+
+						let row = document.createElement('tr');
+
+						let td1 = document.createElement('td')
+						td1.append(tr.accountNumber);
+						let td2 = document.createElement('td')
+						td2.append(tr.domain);
+						let td3 = document.createElement('td')
+						td3.append(tr.type);
+						let td4 = document.createElement('td')
+						td4.append(tr.amount);
+						let td5;
+						if (tr.isFraud()) {
+							td5 = document.createElement('td');
+							td5.style.color = '#f00';
+							td5.append('Fraudulent');
+						}
+						else {
+							td5 = document.createElement('td')
+							td5.append('Successful');
+						}
+
+						row.append(td1, td2, td3, td4, td5);
+						transactionsTableBody.append(row);
+					}
+					return;
+				}
+			}
+			let row = document.createElement('tr');
+			let cell = document.createElement('td');
+			cell.colSpan = 5;
+			cell.style.textAlign = 'center';
+			cell.append('No transactions on this account yet');
+			row.append(cell);
+			transactionsTableBody.append(row);
+		}
+	</script>
+</body>
+
+</html>

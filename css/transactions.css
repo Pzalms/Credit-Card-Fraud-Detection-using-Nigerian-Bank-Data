@@ -1,0 +1,42 @@
+main{
+	margin-top: 100px;
+	padding: 0 50px;
+	width: 100%;
+}
+h1{
+	font-size: 1.2rem;
+	margin-bottom: 30px;
+}
+input[type='text']{
+	width: 250px;
+	height: 30px;
+	outline: none;
+	border: 1.5px solid #ddd;
+	border-left: 10px solid #00308F;
+	padding: 8px;
+	font-size: 0.9rem;
+}
+
+input[type='submit']{
+	color: #fff;
+	background-color: #00308F;
+	border: none;
+	width: 150px;
+	height: 30px;
+	font-weight: bold;
+	cursor: pointer;
+}
+#tableContainer{
+	display: none;
+}
+table#transactionDetails{
+	width: 100%;
+	border: 1.5px solid #ddd;
+	border-collapse: collapse;
+	margin-top: 50px;
+}
+table#transactionDetails td, table#transactionDetails th{
+	border: 1.5px solid #ddd;
+	height: 40px;
+	padding: 0 5px;
+}

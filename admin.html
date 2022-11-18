@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Admin</title>
+
+
+	<link rel="stylesheet" href="css/styles.css">
+	<link rel="stylesheet" href="css/styles2.css">
+</head>
+
+<body>
+
+	<img src="images/accessbank-logo.jpg" alt="" class="logo" />
+	<section class="form">
+		<div id="authForm">
+			<h1>Welcome back admin</h1>
+			<form action="">
+				<div class="form-field">
+					<input type="text" id="username" placeholder="Username" />
+				</div>
+				<div class="form-field">
+					<input type="password" id="password" placeholder="Password" />
+				</div>
+				<input type="submit" value="Login">
+			</form>
+		</div>
+	</section>
+	<section id="img"></section>
+
+	<script src="js/data-access.js"></script>
+	<script>
+
+		const loginForm = document.querySelector('#authForm');
+		loginForm.onsubmit = function (e) {
+			e.preventDefault();
+
+			let username = document.querySelector('#username').value;
+			let password = document.querySelector('#password').value;
+
+			if (username === 'admin' && password === '1234') {
+				window.open('transactions.html', '_self');
+				alert('Successful');
+			}
+			else {
+				alert('Username and/or password incorrect');
+			}
+		};
+	</script>
+</body>
+
+</html>

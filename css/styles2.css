@@ -1,0 +1,81 @@
+section.form{
+	height: 100vh;
+	width: 400px;
+	margin: 100px auto 0;
+}
+
+section.form h1{
+	margin-bottom:50px;
+	text-align: center;
+}
+
+section.form input[type='text'],
+section.form input[type='password'], 
+section.form select{
+	width: 100%;
+	height: 50px;
+	outline: none;
+	border: 1.5px solid #ddd;
+	border-left: 50px solid #00308F;
+	padding: 8px;
+	margin: 10px 0;
+	font-size: 0.9rem;
+}
+
+section.form input[type='submit']{
+	color: #fff;
+	background-color: #00308F;
+	border-radius: 25px;
+	border: none;
+	width: 200px;
+	height: 50px;
+	display: block;
+	margin: 50px auto 0;
+	text-transform: uppercase;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+#transactionForm{
+	display: none;
+}
+
+#balance{
+	display: none;
+	position: absolute;
+	top: 0;
+	right: 500px;
+	width: 100px;
+	padding: 10px;
+	margin: 10px;
+}
+
+#balance span{
+	display: block;
+	text-align: center;
+}
+
+#balance .value{
+	font-size: 1.3rem;
+	font-weight: bold;
+}
+
+
+section#img{
+	height: 100vh;
+	width: 500px;
+	background-image: url('../images/credit-card3.jpg');
+	background-size: cover;
+	background-repeat: no-repeat;
+	position: relative;
+}
+
+section#img::after{
+	content: '';
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	background-color: #00308F;
+	opacity: 0.2;
+}

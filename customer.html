@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Customer</title>
+
+	<link rel="stylesheet" href="css/styles.css">
+	<link rel="stylesheet" href="css/styles2.css">
+</head>
+
+<body>
+	<img src="images/accessbank-logo.jpg" alt="" class="logo" />
+	<section class="form">
+		<div id="authForm">
+			<h1>Welcome back</h1>
+			<form action="">
+				<div class="form-field">
+					<input type="text" id="accNumber" placeholder="Account Number" />
+				</div>
+				<div class="form-field">
+					<input type="text" id="cvv" placeholder="CVV" />
+				</div>
+				<div class="form-field">
+					<input type="text" id="cardNumber" placeholder="Card Number" />
+				</div>
+				<input type="submit" value="Submit">
+			</form>
+		</div>
+
+		<div id="transactionForm">
+			<h1>New Transaction</h1>
+			<form action="">
+				<div class="form-field">
+					<select id="domain">
+						<option selected disabled>Domain</option>
+						<option>Local</option>
+						<option>International</option>
+					</select>
+				</div>
+				<div class="form-field">
+					<select id="transactionType">
+						<option selected disabled>Transaction Type</option>
+						<option>Debit</option>
+						<option>Credit</option>
+					</select>
+				</div>
+				<div class="form-field">
+					<input type="text" id="amount" placeholder="Amount" />
+				</div>
+				<input type="submit" value="Submit">
+			</form>
+		</div>
+	</section>
+	<div id="balance">
+		<span class="text">Balance</span><span class="value"></span>
+	</div>
+	<section id="img"></section>
+
+	<script src="js/data-access.js"></script>
+	<script>
+		const authForm = document.querySelector('#authForm form');
+		const transactionForm = document.querySelector('#transactionForm form');
+
+		let currentCustomer;
+		let attempts = 0;
+
+		authForm.onsubmit = function (e) {
+			e.preventDefault();
+
+			let accNumber = document.querySelector('#accNumber').value;
+			let cvv = document.querySelector('#cvv').value;
+			let cardNumber = document.querySelector('#cardNumber').value;
+
+			if (accNumber.length > 0 && cvv.length > 0 && cardNumber.length > 0) {
+				for (let customer of customerData) {
+					if (customer.accountNumber === accNumber) {
+						if (!customer.active) {
+							alert('This account is suspended');
+							return;
+						}
+						if (customer.cvv === cvv && customer.cardNumber === cardNumber) {
+							currentCustomer = customer;
+
+							attempts = 0;
+							document.querySelector('#authForm').style.display = 'none';
+							document.querySelector('#transactionForm').style.display = 'initial';
+							document.querySelector('#balance').style.display = 'initial';
+							document.querySelector('#balance .value').textContent = '\u20A6' + currentCustomer.balance;
+
+							document.querySelector('#accNumber').value = '';
+							document.querySelector('#cvv').value = '';
+							document.querySelector('#cardNumber').value = '';
+
+							return;
+						}
+						else {
+							attempts++;
+
+							if (attempts === 3) {
+								customer.active = false;
+								updateData();
+								alert('Too many attempts. Account suspended.');
+								return;
+							}
+							alert('CVV and card number do not match the account number.\nAfter 3 attempts, this account will be suspended');
+						}
+					}
+				}
+				alert(`Account ${accNumber} does not exist`);
+			}
+			else {
+				alert('All fields are required');
+			}
+		};
+
+
+		transactionForm.onsubmit = function (e) {
+			e.preventDefault();
+
+			let domainField = document.querySelector("#domain");
+			let transactionTypeField = document.querySelector("#transactionType");
+			let amount = document.querySelector('#amount').value;
+
+			if (domainField.selectedIndex > 0 && transactionTypeField.selectedIndex > 0 && amount.length > 0) {
+				if (!/^\d+\.?\d*$/.test(amount)) {
+					alert('Amount must be a number');
+					return;
+				}
+
+				let domain = domainField.value;
+				let transactionType = transactionTypeField.value;
+
+				let transaction = new Transaction(currentCustomer.accountNumber, domain, transactionType, amount);
+				addTransaction(transaction);
+
+				if (transaction.isFraud()) {
+					let alarm = new Audio('alarm.wav');
+					alert('Fraud detected');
+					alarm.play();
+				}
+				else {
+					for (let i = 0; i < customerData.length; i++) {
+						if (customerData[i] === currentCustomer) {
+							if (transactionType === 'Debit') {
+								customerData[i].balance = Number(customerData[i].balance) - Number(amount);
+							}
+							else if (transactionType === 'Credit') {
+								customerData[i].balance = Number(customerData[i].balance) + Number(amount);
+							}
+							updateData();
+							document.querySelector('#balance .value').textContent = '\u20A6' + currentCustomer.balance;
+
+							domainField.selectedIndex = 0;
+							transactionTypeField.selectedIndex = 0;
+							document.querySelector('#amount').value = '';
+
+							break;
+						}
+					}
+					alert('Successful');
+				}
+			}
+			else {
+				alert('All fields are required');
+			}
+		};
+	</script>
+</body>
+
+</html>
